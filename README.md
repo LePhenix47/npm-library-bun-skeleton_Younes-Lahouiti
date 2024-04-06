@@ -1,15 +1,18 @@
-# bun-skeleton
+# @lephenix47/
 
-To install dependencies:
+## Table of Contents
 
-```bash
-bun install
-```
+- [@lephenix47/](#lephenix47)
+  - [Table of Contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [Usage](#usage)
+    - [Importing the Library](#importing-the-library)
+  - [Conclusion](#conclusion)
 
-To run:
+## Introduction
 
-```bash
-bun run index.ts
-```
+## Usage
 
-This project was created using `bun init` in bun v1.1.0. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+### Importing the Library
+
+## Conclusion
