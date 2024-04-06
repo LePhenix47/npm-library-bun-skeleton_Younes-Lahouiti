@@ -1,0 +1,42 @@
+{
+  "name": "bun-skeleton",
+  "version": "1.0.0",
+  "description": "description",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "typesVersion": {
+    "*": {
+      "*": [
+        "types"
+      ]
+    }
+  },
+  "scripts": {
+    "ts": "bun build ./src/index.ts --outdir lib",
+    "publish": "bun publish --access=public",
+    "update-version": "bun update-project-version.mjs && git add . && git commit -m \"Update on the project version\" && git push",
+    "push-lib": "(git diff --quiet || (echo 'You have uncommitted changes. Please commit your changes first.' && exit 1)) && bun run update-version && bun run publish"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LePhenix47/[URI COMPONENT].git"
+  },
+  "homepage": "https://github.com/LePhenix47/[URI COMPONENT]#readme",
+  "bugs": {
+    "url": "https://github.com/LePhenix47/[URI COMPONENT]/issues"
+  },
+  "files": [
+    "lib/**/*"
+  ],
+  "keywords": [],
+  "author": "Younes LAHOUITI",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/bun": "latest",
+    "bun-plugin-dts-auto": "^0.10.0",
+    "typescript": "^5.4.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
