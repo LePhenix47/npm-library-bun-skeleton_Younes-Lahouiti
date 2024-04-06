@@ -1,4 +1,3 @@
-import fs from "fs";
 import readline from "readline";
 
 type PackageJson = {
@@ -42,32 +41,42 @@ type PackageJson = {
  * @param {string} type - Version type to increase. Must be one of "patch", "minor", or "major".
  * @throws {Error} Will throw an error if invalid type provided.
  */
-function updateVersion(type: string) {
-  // Read package.json
-  const packageJsonPath = "./package.json" as const;
-  const packageJson: PackageJson = JSON.parse(
-    fs.readFileSync(packageJsonPath, "utf8")
-  );
+async function updateVersion(type: string) {
+  // * Read package.json
+  const path = "./package.json" as const;
+
+  const file = Bun.file(path);
+
+  if (!file.exists()) {
+    throw new Error("package.json file not found");
+  }
+
+  const packageJson: PackageJson = await file.json();
 
   const currentVersion: string = packageJson.version;
 
-  // Get current version
+  // * Get current version
   let [major, minor, patch] = currentVersion.split(".").map(Number);
 
-  // Update version based on the type
+  // * Update version based on the type
   switch (type) {
+    case "p":
     case "patch": {
       patch++;
       break;
     }
+
+    case "min":
     case "minor": {
       minor++;
-      patch = 0; // Reset patch version for a minor update
+      patch = 0; // ? Reset patch version for a minor update
       break;
     }
+
+    case "max":
     case "major": {
       major++;
-      minor = 0; // Reset minor and patch versions for a major update
+      minor = 0; // ? Reset minor and patch versions for a major update
       patch = 0;
       break;
     }
@@ -78,9 +87,10 @@ function updateVersion(type: string) {
     }
   }
 
-  // Update package.json with the new version
+  // * Update package.json with the new version
   packageJson.version = `${major}.${minor}.${patch}`;
-  fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
+
+  await Bun.write(path, JSON.stringify(packageJson, null, 2));
 
   const newVersion: string = packageJson.version;
 
@@ -93,23 +103,21 @@ function updateVersion(type: string) {
  * Initiates the script prompting the user for a version type and starts the update process afterwards.
  */
 function startScript() {
-  // Create interface to read user input
+  // * Create interface to read user input
   const rl: readline.Interface = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
 
-  // Prompt user for version type
+  // * Prompt user for version type
   rl.question(
     "Which version do you want to update (patch/minor/major)? ",
     async (answer: string) => {
       try {
-        updateVersion(answer.trim());
+        await updateVersion(answer.trim());
       } catch (error: any) {
         console.error(error.message);
       } finally {
-        rl.close();
-
         process.exit(1);
       }
     }
