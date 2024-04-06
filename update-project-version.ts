@@ -1,6 +1,40 @@
 import fs from "fs";
 import readline from "readline";
 
+type PackageJson = {
+  name: string;
+  version: string;
+  description: string;
+  main: string;
+  types: string;
+  typesVersion: {
+    "*": {
+      "*": string[];
+    };
+  };
+  scripts: {
+    [key: string]: string;
+  };
+  repository: {
+    type: string;
+    url: string;
+  };
+  homepage: string;
+  bugs: {
+    url: string;
+  };
+  files: string[];
+  keywords: string[];
+  author: string;
+  license: string;
+  devDependencies: {
+    [key: string]: string;
+  };
+  peerDependencies: {
+    [key: string]: string;
+  };
+};
+
 /**
  * Updates the project version in the package.json file based on the provided type.
  * Supported types are "patch", "minor", and "major".
@@ -8,12 +42,14 @@ import readline from "readline";
  * @param {string} type - Version type to increase. Must be one of "patch", "minor", or "major".
  * @throws {Error} Will throw an error if invalid type provided.
  */
-function updateVersion(type) {
+function updateVersion(type: string) {
   // Read package.json
-  const packageJsonPath = "./package.json";
-  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
+  const packageJsonPath = "./package.json" as const;
+  const packageJson: PackageJson = JSON.parse(
+    fs.readFileSync(packageJsonPath, "utf8")
+  );
 
-  const currentVersion = packageJson.version;
+  const currentVersion: string = packageJson.version;
 
   // Get current version
   let [major, minor, patch] = currentVersion.split(".").map(Number);
@@ -46,7 +82,7 @@ function updateVersion(type) {
   packageJson.version = `${major}.${minor}.${patch}`;
   fs.writeFileSync(packageJsonPath, JSON.stringify(packageJson, null, 2));
 
-  const newVersion = packageJson.version;
+  const newVersion: string = packageJson.version;
 
   console.log(
     `✅ Successfully updated version: ${currentVersion} → ${newVersion}`
@@ -58,7 +94,7 @@ function updateVersion(type) {
  */
 function startScript() {
   // Create interface to read user input
-  const rl = readline.createInterface({
+  const rl: readline.Interface = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
@@ -66,13 +102,16 @@ function startScript() {
   // Prompt user for version type
   rl.question(
     "Which version do you want to update (patch/minor/major)? ",
-    async (answer) => {
+    async (answer: string) => {
       try {
         updateVersion(answer.trim());
-      } catch (error) {
+      } catch (error: any) {
         console.error(error.message);
+      } finally {
+        rl.close();
+
+        process.exit(1);
       }
-      rl.close();
     }
   );
 }
