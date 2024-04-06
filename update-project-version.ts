@@ -1,3 +1,4 @@
+import type { BunFile } from "bun";
 import readline from "readline";
 
 type PackageJson = {
@@ -45,7 +46,7 @@ async function updateVersion(type: string) {
   // * Read package.json
   const path = "./package.json" as const;
 
-  const file = Bun.file(path);
+  const file: BunFile = Bun.file(path);
 
   if (!file.exists()) {
     throw new Error("package.json file not found");
